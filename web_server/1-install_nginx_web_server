@@ -9,7 +9,7 @@ sudo apt install nginx -y
 sudo service nginx start
 
 # Replace the default Nginx page
-echo "Holberton School for the win!" | sudo tee /var/www/html/index.html
+echo "Holberton School" | sudo tee /var/www/html/index.html
 
 # Restart Nginx without using systemctl
 sudo service nginx restart
