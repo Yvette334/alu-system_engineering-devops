@@ -1,20 +1,50 @@
 #!/usr/bin/env bash
-# Script to install and configure Nginx on Ubuntu
 
-# Update package lists and install Nginx
-sudo apt update -y
-sudo apt install nginx -y
+# Update and Install Nginx
+echo -e "Updating and installing Nginx.\n"
+sudo apt-get update -y -qq && sudo apt-get install nginx -y
 
-# Ensure Nginx is running
-sudo service nginx start
+# Start Nginx service
+echo -e "\nStarting Nginx.\n"
+sudo systemctl start nginx
+sudo systemctl enable nginx
 
-sudo sed -i '/server_name _;/a \  location /redirect_me {\n      return 301 https://www.youtube.com/watch?v=QH2-TGUlwu4;\n   }' /etc/nginx/sites-available/default
+# Allow Nginx in firewall (if ufw is installed)
+if command -v ufw &> /dev/null; then
+    sudo ufw allow 'Nginx HTTP'
+fi
 
-# Replace the default Nginx page
-echo "Holberton School" | sudo tee /var/www/html/index.html
+# Set correct permissions for /var/www
+sudo chown -R "$USER":"$USER" /var/www/html
+sudo chmod -R 755 /var/www
 
-# Restart Nginx without using systemctl
-sudo service nginx restart
+# Backup default index.html
+if [ -f "/var/www/html/index.nginx-debian.html" ]; then
+    mv /var/www/html/index.nginx-debian.html /var/www/html/index.nginx-debian.html.bckp
+fi
 
-# Allow HTTP traffic through the firewall
-sudo ufw allow 'Nginx HTTP'
+# Create a new index.html
+echo "Holberton School" | sudo tee /var/www/html/index.html > /dev/null
+
+# Configure Nginx redirection properly
+REDIRECT_CONF="
+server {
+    listen 80;
+    server_name _;
+
+    location /redirect_me {
+        return 301 https://www.youtube.com/watch?v=QH2-TGUlwu4;
+    }
+
+    location / {
+        root /var/www/html;
+        index index.html;
+    }
+}"
+
+echo "$REDIRECT_CONF" | sudo tee /etc/nginx/sites-available/default > /dev/null
+
+# Test Nginx configuration before restarting
+sudo nginx -t && sudo systemctl restart nginx
+
+echo -e "\nCompleted."
