@@ -1,23 +1,18 @@
 #!/usr/bin/env bash
-# Script to install and configure Nginx to serve "Holberton School for the win!"
 
-echo -e "Installing Nginx...\n"
-sudo apt-get update -y -qq && sudo apt-get install nginx -y
+# This script installs and configures Nginx on an Ubuntu 16.04 LTS server
+
+# Update package list
+sudo apt-get update -y
+
+# Install Nginx
+sudo apt-get install nginx -y
 
 # Ensure Nginx is running
 sudo service nginx start
 
-# Allow traffic on port 80
-sudo ufw allow 'Nginx HTTP'
+# Configure Nginx to return 'Holberton School for the win!'
+echo 'Holberton School for the win!' | sudo tee /var/www/html/index.html > /dev/null
 
-# Replace the default index.html with the required content
-echo "Holberton School for the win!" | sudo tee /var/www/html/index.html > /dev/null
-
-# Restart Nginx using service (not systemctl)
+# Restart Nginx without using systemctl
 sudo service nginx restart
-
-# Verify if Nginx is serving the expected content
-echo -e "Checking Nginx response:\n"
-curl -s localhost | grep "Holberton School for the win!" && echo "Setup successful!" || echo "Error: Nginx is not serving the correct content."
-
-echo -e "\nCompleted!"
