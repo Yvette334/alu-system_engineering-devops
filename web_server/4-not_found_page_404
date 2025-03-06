@@ -26,3 +26,9 @@ sudo nginx -t
 
 # Restart nginx to apply changes
 sudo systemctl restart nginx
+
+# Added Debugging
+echo "Nginx configuration file:"
+sudo cat /etc/nginx/sites-available/default
+echo "404.html file content:"
+sudo cat /var/www/html/404.html
