@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
-# Configures a new ubuntu machine 
-# INSTALLING Nginx on port 80
+# Script to install and configure Nginx to serve "Holberton School for the win!"
 
 echo -e "Installing Nginx...\n"
 sudo apt-get update -y -qq && sudo apt-get install nginx -y
@@ -12,14 +11,13 @@ sudo service nginx start
 sudo ufw allow 'Nginx HTTP'
 
 # Replace the default index.html with the required content
-echo "Holberton School" | sudo tee /var/www/html/index.html > /dev/null
+echo "Holberton School for the win!" | sudo tee /var/www/html/index.html > /dev/null
 
 # Restart Nginx using service (not systemctl)
 sudo service nginx restart
 
 # Verify if Nginx is serving the expected content
 echo -e "Checking Nginx response:\n"
-curl -s localhost | grep "Holberton School" && echo "Setup successful!" || echo "Error: Nginx is not serving the correct content."
+curl -s localhost | grep "Holberton School for the win!" && echo "Setup successful!" || echo "Error: Nginx is not serving the correct content."
 
-echo -e "\nConfiguration completed!"
-
+echo -e "\nCompleted!"
