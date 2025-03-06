@@ -3,26 +3,23 @@
 # INSTALLING Nginx on port 80
 
 echo -e "Installing Nginx...\n"
-sudo apt-get update -y -qq && \
-sudo apt-get install nginx -y
+sudo apt-get update -y -qq && sudo apt-get install nginx -y
 
-# Starting Nginx service
+# Ensure Nginx is running
 sudo service nginx start
 
-# Allowing Nginx on the firewall
+# Allow traffic on port 80
 sudo ufw allow 'Nginx HTTP'
 
-# Give the user ownership of website files for easy editing
-sudo chown -R "$USER":"$USER" /var/www/html
-sudo chmod -R 755 /var/www
+# Replace the default index.html with the required content
+echo "Holberton School" | sudo tee /var/www/html/index.html > /dev/null
 
-# Backup default index
-sudo cp /var/www/html/index.nginx-debian.html /var/www/html/index.nginx-debian.html.bckp
-
-# Creating a new index file 
-echo "Holberton School" | sudo tee /var/www/html/index.nginx-debian.html > /dev/null
-
-# Restarting Nginx
+# Restart Nginx using service (not systemctl)
 sudo service nginx restart
 
-echo -e "completed\n"
+# Verify if Nginx is serving the expected content
+echo -e "Checking Nginx response:\n"
+curl -s localhost | grep "Holberton School" && echo "Setup successful!" || echo "Error: Nginx is not serving the correct content."
+
+echo -e "\nConfiguration completed!"
+
