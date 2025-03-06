@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
-#configures a new ubuntu machine 
+# Configures a new Ubuntu machine 
 # INSTALLING Nginx on port 80
 
 echo -e "installing Nginx\n"
 sudo apt-get update -y -qq && \
-	 sudo apt-get install nginx -y
+    sudo apt-get install nginx -y
 
-# starting nginx service
+# Starting nginx service
 sudo service nginx start
 
-# allowing nginx on firewall
+# Allowing nginx on firewall
 sudo ufw allow 'Nginx HTTP'
 
 # Give the user ownership to website files for easy editing
@@ -17,10 +17,10 @@ sudo chown -R "$USER":"$USER" /var/www/html
 sudo chmod -R 755 /var/www
 
 # Backup default index
-cp /var/www/html/index.nginx-debian.html /var/www/html/index.nginx-debian.html.bckp
+sudo cp /var/www/html/index.nginx-debian.html /var/www/html/index.nginx-debian.html.bckp
 
-# Creating new index
-echo -e "Holberton School!" | dd status=none of=/var/www/html/index.nginx-debian.html
+# Creating new index with "Holberton School"
+echo -e "Holberton School" | sudo tee /var/www/html/index.nginx-debian.html > /dev/null
 
 # Restarting nginx
 sudo service nginx restart
