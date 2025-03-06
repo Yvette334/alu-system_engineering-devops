@@ -6,20 +6,23 @@ sudo apt-get -y update
 sudo apt-get -y install nginx
 
 # Start nginx service
-sudo service nginx start
+sudo systemctl start nginx
 
 # Create a custom 404 page
 echo "Ceci n'est pas une page" | sudo tee /var/www/html/404.html
 
 # Configure nginx to use the custom 404 page
 config_file="/etc/nginx/sites-available/default"
-error_config="error_page 404 /404.html;\n\tlocation = /404.html {\n\t\troot /var/www/html;\n\t\tinternal;\n\t}"
 
-# Add the error_page directive to the server block
-sudo sed -i "/server_name _;/a\\\\t$error_config" $config_file
+# Check if the location block already exists
+if ! grep -q "location = /404.html" "$config_file"; then
+        error_config="error_page 404 /404.html;\n\tlocation = /404.html {\n\t\troot /var/www/html;\n\t\tinternal;\n\t}"
+        # Add the error_page directive to the server block
+        sudo sed -i "/server_name _;/a\\\\t$error_config" "$config_file"
+fi
 
 # Test nginx configuration
 sudo nginx -t
 
 # Restart nginx to apply changes
-sudo service nginx restart
+sudo systemctl restart nginx
