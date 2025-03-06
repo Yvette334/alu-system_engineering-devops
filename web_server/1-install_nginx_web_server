@@ -2,24 +2,16 @@
 # Configures a new ubuntu machine 
 # INSTALLING Nginx on port 80
 
-echo -e "installing Nginx\n"
 sudo apt-get update -y 
 sudo apt-get install nginx -y
-
-# starting nginx service
+# Ensure Nginx is running
 sudo service nginx start
 
-# allowing nginx on firewall
-sudo ufw allow 'Nginx HTTP'
-
-# Give the user ownership to website files for easy editing
-sudo chown -R "$USER":"$USER" /var/www/html
-sudo chmod -R 755 /var/www
-
-# Creating new index
+# Replace the default Nginx page
 echo "Holberton School for the win!" | sudo tee /var/www/html/index.html
 
-# Restarting nginx
+# Restart Nginx without using systemctl
 sudo service nginx restart
 
-echo -e "Completed\n"
+# Allow HTTP traffic through the firewall
+sudo ufw allow 'Nginx HTTP'
