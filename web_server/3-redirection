@@ -2,11 +2,8 @@
 # Script to install and configure Nginx with a redirection
 
 # Update package lists and install Nginx
-sudo apt update -y
-sudo apt install nginx -y
-
-# Ensure Nginx is running
-sudo service nginx start
+sudo apt-get update
+sudo apt-get install -y nginx
 
 # Replace the default Nginx page
 echo "Holberton School" | sudo tee /var/www/html/index.html
