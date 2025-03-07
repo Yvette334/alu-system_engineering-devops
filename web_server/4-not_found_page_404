@@ -1,24 +1,42 @@
-#!/usr/bin/env bash
-# Script for 404 page
+#!/bin/bash
+# 4-not_found_page_404
 
-# Update package lists and install Nginx
+# Update package list and install Nginx
 sudo apt-get update
 sudo apt-get install -y nginx
 
-# Replace the default Nginx page
-echo "Holberton School" | sudo tee /var/www/html/index.html
+# Create the custom 404 page
+echo "Ceci n'est pas une page" | sudo tee /var/www/html/404.html
 
-# Configure redirection for /redirect_me
-string_for_replacement="server_name _;\n\trewrite ^\/redirect_me https:\/\/www.youtube.com\/watch?v=QH2-TGUlwu4 permanent;"
-sudo sed -i "s/server_name _;/$string_for_replacement/" /etc/nginx/sites-enabled/default
+# Configure Nginx to use the custom 404 page
+sudo tee /etc/nginx/sites-available/default > /dev/null <<EOF
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
 
-# 404 error page
-echo"Ceci n'est pas une pag" | sudo tee /var/www/html/404.html
+    root /var/www/html;
+    index index.html index.htm index.nginx-debian.html;
 
-replace="listen 80 default_server;\n\terror_page 404 \/404.html;\n\tlocation =\/404.html {\n\t\troot \/var\/www\/html;\n\t\tinternal;\n\t}"
+    server_name _;
 
-sudo sed -i "s/listen 80 default_server;/$replace/" /etc/nginx/sites-enabled/default
+    error_page 404 /404.html;
+    location = /404.html {
+        root /var/www/html;
+        internal;
+    }
 
-#restart nginx
+    location / {
+        try_files \$uri \$uri/ =404;
+    }
 
-sudo service nginx restart
+    location ~ /\.ht {
+        deny all;
+    }
+}
+EOF
+
+# Restart Nginx
+sudo systemctl restart nginx
+
+# Display a message indicating successful configuration
+echo "Nginx configured with custom 404 page."
