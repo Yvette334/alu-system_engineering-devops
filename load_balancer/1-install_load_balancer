@@ -1,9 +1,6 @@
 #!/usr/bin/env bash
 # install load balancer
 
-
-echo -e "Updating and doing some minor checks...\n"
-
 function install() {
 	command -v "$1" &> /dev/null
 
@@ -14,15 +11,12 @@ function install() {
 			sudo apt-get install -y "$1" -qq
 		echo -e "\n"
 	else
-		echo -e "	${1} is already installed.\n"
+		echo -e "${1} is already installed.\n"
 	fi
 }
 
-install haproxy #install haproxy
+install haproxy
 
-echo -e "\nSetting up some minor stuff.\n"
-
-# backup default server config file
 sudo cp /etc/haproxy/haproxy.cfg haproxy_default.backup
 
 server_config=\
@@ -34,14 +28,14 @@ defaults
   timeout server 15s
   timeout http-request 10s
 
-frontend clickviral-tech-frontend
+frontend http-in
     bind *:80
-    default_backend clickviral-tech-backend
+    default_backend servers
 
-backend clickviral-tech-backend
+backend servers
     balance roundrobin
-    server 151666-web-01 100.25.190.21:80 check
-    server 151666-web-02 54.160.77.90:80 check
+    server 162226-web-01 100.25.192.36:80 check
+    server 162226-web-02 54.236.48.165:80 check
 "
 
 # shellcheck disable=SC2154
@@ -50,14 +44,8 @@ echo "$server_config" | sudo dd status=none of=/etc/haproxy/haproxy.cfg
 # enable haproxy to be started by init script
 echo "ENABLED=1" | sudo dd status=none of=/etc/default/haproxy
 
-echo "configured - Roundrobin On web-01 & web-02"
-
 if [ "$(pgrep -c haproxy)" -le 0 ]; then
 	sudo service haproxy start
 else
 	sudo service haproxy restart
 fi
-
-echo -e "web-01 web-02"
-echo "web-01"
-echo "web-02"
